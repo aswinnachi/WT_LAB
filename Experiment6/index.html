@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experiment 6 - JavaScript Timer Functions and Arrays</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        h1 {
+            text-align: center;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #1d4ed8;
+        }
+
+        section {
+            background: #ffffff;
+            max-width: 900px;
+            margin: 25px auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08);
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            margin: 6px 6px 12px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #time {
+            font-size: 36px;
+            font-weight: bold;
+            color: #111827;
+            letter-spacing: 1px;
+        }
+
+        #movingArea {
+            position: relative;
+            height: 260px;
+            border: 2px solid #64748b;
+            overflow: hidden;
+            margin-top: 20px;
+            border-radius: 10px;
+            background: linear-gradient(to bottom, #dbeafe, #f8fafc);
+        }
+
+        #img {
+            position: absolute;
+            left: 0;
+            top: 70px;
+            width: 150px;
+            transition: left 0.02s linear;
+        }
+
+        #para1 {
+            font-size: 18px;
+            cursor: pointer;
+            color: #374151;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background: #eff6ff;
+            color: #1e3a8a;
+        }
+
+        .info-text {
+            color: #475569;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <h1>EXPERIMENT 6</h1>
+    <h2 style="text-align:center;">JavaScript - Timer Functions and Arrays</h2>
+
+    <section>
+        <h2>1. Digital Clock</h2>
+        <p class="info-text">Current time is shown using JavaScript timing functions.</p>
+        <div id="time">00:00:00</div>
+    </section>
+
+    <section>
+        <h2>2. Dynamic Background</h2>
+        <p class="info-text">The page background changes automatically every 30 seconds.</p>
+        <button onclick="changeBackground()">Change Now</button>
+    </section>
+
+    <section>
+        <h2>3. Change Font Size</h2>
+        <p id="para1" onmouseover="incSize()" onmouseout="decSize()">
+            Move the cursor over this text to increase the font size.
+        </p>
+    </section>
+
+    <section>
+        <h2>4. Move and Stop Car</h2>
+        <p class="info-text">Use the buttons to move or stop the car animation.</p>
+        <button onclick="moveRight()">Move</button>
+        <button onclick="stopCar()">Stop</button>
+
+        <div id="movingArea">
+            <img src="car.jpg" id="img" alt="Car">
+        </div>
+    </section>
+
+    <section>
+        <h2>5. Student Array of Objects</h2>
+        <p class="info-text">Each student object includes a name, register number, and date of birth.</p>
+        <div id="students"></div>
+    </section>
+
+    <script>
+        function display() {
+            var d = new Date();
+            var hour = d.getHours();
+            var minutes = d.getMinutes();
+            var seconds = d.getSeconds();
+
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+
+            if (minutes < 10) {
+                minutes = "0" + minutes;
+            }
+
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+
+            document.getElementById("time").innerHTML = hour + ":" + minutes + ":" + seconds;
+        }
+
+        setInterval(display, 1000);
+        display();
+
+        function changeBackground() {
+            var red = Math.floor(Math.random() * 256);
+            var green = Math.floor(Math.random() * 256);
+            var blue = Math.floor(Math.random() * 256);
+            var color = "rgb(" + red + "," + green + "," + blue + ")";
+            document.body.style.backgroundColor = color;
+        }
+
+        setInterval(changeBackground, 30000);
+
+        function incSize() {
+            document.getElementById("para1").style.fontSize = "28px";
+        }
+
+        function decSize() {
+            document.getElementById("para1").style.fontSize = "18px";
+        }
+
+        var imgObj;
+        var position = 0;
+        var animation = null;
+
+        function init() {
+            imgObj = document.getElementById("img");
+            position = 0;
+            imgObj.style.left = "0px";
+        }
+
+        function moveRight() {
+            if (animation !== null) {
+                return;
+            }
+
+            function move() {
+                position = position + 2;
+
+                if (position > 700) {
+                    position = 0;
+                }
+
+                imgObj.style.left = position + "px";
+                animation = setTimeout(move, 20);
+            }
+
+            move();
+        }
+
+        function stopCar() {
+            clearTimeout(animation);
+            animation = null;
+        }
+
+        window.onload = init;
+
+        var student = [
+            { name: "John", r_num: "UR13CS129", dob: "20-Apr-1995" },
+            { name: "Joseph", r_num: "UR13CS130", dob: "05-Jan-1998" },
+            { name: "Aswin", r_num: "UR24CS1157", dob: "15-Aug-2001" },
+            { name: "Rahul", r_num: "UR24CS1158", dob: "10-Dec-1999" },
+            { name: "Aisha", r_num: "UR24CS1160", dob: "02-Feb-2000" }
+        ];
+
+        var output = "<table>";
+        output += "<tr><th>Name</th><th>Register Number</th><th>Date of Birth</th><th>Category</th></tr>";
+
+        for (var i = 0; i < student.length; i++) {
+            var birthDate = new Date(student[i].dob);
+            var category;
+
+            if (birthDate.getFullYear() < 2000) {
+                category = "Born before 2000";
+            } else {
+                category = "Born after 2000";
+            }
+
+            output += "<tr><td>" + student[i].name + "</td><td>" + student[i].r_num + "</td><td>" + student[i].dob + "</td><td>" + category + "</td></tr>";
+        }
+
+        output += "</table>";
+        document.getElementById("students").innerHTML = output;
+    </script>
+</body>
+</html>
