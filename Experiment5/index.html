@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Experiment 5 - DOM & Events (Short)</title>
+  <style>
+    *{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f2f2f2;color:#222}
+    header{background:#333;color:#fff;text-align:center;padding:18px}
+    section{background:#fff;width:90%;max-width:900px;margin:16px auto;padding:14px;border-radius:8px;box-shadow:0 2px 6px #bbb}
+    input,select,button{padding:6px;margin:6px;font-size:14px}
+    #garden{display:grid;gap:6px;margin-top:10px}
+    #garden img,#coin{width:100px;height:100px;object-fit:cover}
+    .coin-area{text-align:center}
+  </style>
+</head>
+<body>
+<header>
+  <h1>EXPERIMENT 5</h1>
+  <h2>JavaScript — DOM Elements & Events</h2>
+</header>
+
+<div id="error" style="color:#b00;text-align:center;margin-top:8px"></div>
+
+<section>
+  <h3>1. Shortest & Longest Word</h3>
+  <input id="wordString" value="Web Development Tutorial">
+  <button id="findBtn">Find Words</button>
+  <div id="wordResult" class="result"></div>
+</section>
+
+<section>
+  <h3>2. BMI Calculator</h3>
+  <input id="weight" placeholder="kg">
+  <input id="height" placeholder="m">
+  <button id="bmiBtn">Calculate BMI</button>
+  <div>Your BMI: <span id="score"></span> — <span id="type"></span></div>
+</section>
+
+<section>
+  <h3>3. Fruit Farm</h3>
+  Rows <input id="rows" value="3" style="width:56px"> Cols <input id="cols" value="4" style="width:56px">
+  <button id="growBtn">Plant Garden</button>
+  <div id="garden"></div>
+</section>
+
+<section>
+  <h3>4. Currency Converter</h3>
+  <input id="amount" placeholder="amount" style="width:120px">
+  <select id="from"><option>INR</option><option>USD</option></select>
+  to
+  <select id="to"><option>USD</option><option>INR</option></select>
+  <button id="convBtn">Convert</button>
+  <span id="answer"></span>
+</section>
+
+<section>
+  <h3>5. Coin Flip</h3>
+  <div class="coin-area">
+    <img id="coin" src="heads.jpg" alt="coin">
+    <div><button id="flip">Flip!</button></div>
+    Heads: <span id="num_heads">0</span> — Tails: <span id="num_tails">0</span>
+  </div>
+</section>
+
+<section>
+  <h3>6. Birthday Cake Order</h3>
+  0.5kg <input id="small" value="0" style="width:50px">
+  1kg <input id="medium" value="0" style="width:50px">
+  2kg <input id="large" value="0" style="width:50px"><br>
+  Tip: <label><input type="radio" name="tip" value="10">10%</label>
+  <label><input type="radio" name="tip" value="15" checked>15%</label>
+  <label><input type="radio" name="tip" value="20">20%</label>
+  <div><button id="orderBtn">Calculate Order</button></div>
+  Cost: Rs.<span id="price">0.00</span>
+</section>
+
+<script>
+try{
+  // helpers and error reporting
+  const $=(id)=>document.getElementById(id);
+  const showError=(m)=>{const e=$('error');if(e)e.textContent=String(m);console.error(m)};
+  window.addEventListener('error',e=>{showError(e.message || e.toString())});
+  window.addEventListener('unhandledrejection',e=>{showError(e.reason || e)});
+
+  // safe setter for click handlers
+  const setClick=(id,fn)=>{const el=$(id);if(!el){showError('Missing element: '+id);return}el.onclick=fn};
+
+  // 1. Shortest & Longest
+  setClick('findBtn',()=>{
+    try{
+      const el=$('wordString');if(!el)return;const s=el.value.trim();if(!s){$('wordResult').textContent='';return}
+      const a=s.split(/\s+/);let sh=a[0],lg=a[0];for(let i=1;i<a.length;i++){if(a[i].length<sh.length)sh=a[i];if(a[i].length>lg.length)lg=a[i]}
+      const out=$('wordResult');if(out)out.innerHTML=`Shortest: '${sh}'<br>Longest: '${lg}'`;
+    }catch(e){showError(e)}
+  });
+
+  // 2. BMI
+  setClick('bmiBtn',()=>{try{const w=parseFloat($('weight')?.value)||0,h=parseFloat($('height')?.value)||1;const bmi=w/(h*h);if($('score'))$('score').textContent=bmi.toFixed(2);if($('type'))$('type').textContent=bmi<18?'Underweight':bmi<25?'Normal':bmi<30?'Overweight':'Obese'}catch(e){showError(e)}});
+
+  // 3. Fruit Farm
+  setClick('growBtn',()=>{try{const r=parseInt($('rows')?.value)||0,c=parseInt($('cols')?.value)||0,g=$('garden');if(!g)return;g.innerHTML='';g.style.gridTemplateColumns=`repeat(${c},100px)`;const imgs=['orange.jpg','apple.jpg'];for(let i=0;i<r*c;i++){const img=document.createElement('img');img.src=imgs[Math.random()<0.5?0:1];g.appendChild(img)}}catch(e){showError(e)}});
+
+  // 4. Currency Converter
+  setClick('convBtn',()=>{try{let amt=parseFloat($('amount')?.value)||0,from=$('from')?.value,to=$('to')?.value,res=amt;if(from==='INR'&&to==='USD')res=amt*0.015;else if(from==='USD'&&to==='INR')res=amt*67.12;const ans=$('answer');if(ans)ans.textContent=' '+res.toFixed(2)+' '+to}catch(e){showError(e)}});
+
+  // 5. Coin Flip
+  let heads=0,tails=0;const flipEl=$('flip');if(flipEl)flipEl.onclick=()=>{try{if(Math.random()<0.5){if($('coin'))$('coin').src='heads.jpg';$('num_heads').textContent=++heads}else{if($('coin'))$('coin').src='tails.jpg';$('num_tails').textContent=++tails}}catch(e){showError(e)}};
+
+  // 6. Cake Order
+  setClick('orderBtn',()=>{try{const half=100,one=200,two=400,s=parseInt($('small')?.value)||0,m=parseInt($('medium')?.value)||0,l=parseInt($('large')?.value)||0;let subtotal=s*half+m*one+l*two;let tax=subtotal*0.09;let totalAfter=subtotal+tax;const tipEl=document.querySelector('input[name="tip"]:checked');const tip=parseFloat(tipEl?.value)||0;let total=totalAfter+totalAfter*(tip/100);if($('price'))$('price').textContent=total.toFixed(2)}catch(e){showError(e)}});
+
+  // loaded
+  console.log('script initialized');
+}catch(e){
+  try{const el=document.getElementById('error');if(el)el.textContent=String(e)}catch(_){}
+  console.error(e);
+}
+</script>
+</body>
+</html>
